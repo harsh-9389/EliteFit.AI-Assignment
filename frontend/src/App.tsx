@@ -15,11 +15,9 @@ function App() {
     const [priority, setPriority] = useState<string>('')
     const [dueDate, setDueDate] = useState<Date>(new Date())
     const [description, setDescription] = useState<string>('')
-    const [status, setStatus] = useState('ongoing')
+    const [status, setStatus] = useState<string>('upcoming')
 
-    const [upcomingTasks, setUpcomingTasks] = useState<custom[]>([])
-    const [overdueTasks, setOverdueTasks] = useState<custom[]>([])
-    const [completedTasks, setCompletedTasks] = useState<custom[]>([])
+    const [tasks, setTasks] = useState<custom[]>([])
 
     const handleChangeInput: any = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setTitle(event.target.value)
@@ -45,13 +43,23 @@ function App() {
             description,
             status
         }
-        setUpcomingTasks([...upcomingTasks, newTask])
+        setTasks([...tasks, newTask])
     }
 
-    const handleDeleteTask: any = (index: number) => {
-        const updatedTasks: custom[] = upcomingTasks.filter((_, i) => i !== index);
-        setUpcomingTasks(updatedTasks);
+    const handleDelete: any = (task: custom): void => {
+        const updatedTasks: custom[] = tasks.filter((element: custom): boolean => element !== task);
+        setTasks(updatedTasks);
     };
+
+    const handleComplete = (task: custom): void => {
+        const updatedTasks: custom[] = tasks.map((element: custom): custom => {
+            if (element === task) {
+                return { ...element, status: 'completed' };
+            }
+            return element;
+        });
+        setTasks(updatedTasks);
+    }
 
   return (
     <>
@@ -64,7 +72,6 @@ function App() {
             placeholder="Please enter your task here"
             onChange={handleChangeInput}
         />
-        {/*<Priorities priority={priority} setPriority={setPriority}/>*/}
         <Dropdown
             value={priority}
             onChange={handleChangePriority}
@@ -90,33 +97,47 @@ function App() {
             <div style={{display: "grid"}}>
                 <h3>Upcoming Tasks:</h3>
                 <ul>
-                    {upcomingTasks.map((task: custom, index: number) => (
+
+                    {tasks.filter((task: custom): boolean => task.status === 'upcoming')?.map((task: custom, index: number) => (
                         <>
                             <li key={index}> Title : {task.title}</li>
                             <li key={index}> Due Date: {task.dueDate.toDateString()} </li>
                             <li key={index}> Priority: {task.priority} </li>
                             <li key={index}> Description: {task.description} </li>
-                            <button> Completed</button>
-                            <button onClick={() => handleDeleteTask(index)}>Delete</button>
+                            <button onClick={(): any => handleComplete(task)}> Completed</button>
+                            <button onClick={(): any => handleDelete(task)}>Delete</button>
                         </>
                     ))}
                 </ul>
             </div>
 
-            <div style={{display: "grid"}}>
-                <h3>Overdue Tasks:</h3>
-                <ul>
-                    {overdueTasks.map((task: custom, index: number) => (
-                        <li key={index}>Title : {task.title} Priority: {task.priority} Due Date: {task.dueDate?.toString()} Description: {task.description}</li>
-                    ))}
-                </ul>
-            </div>
+            {/*<div style={{display: "grid"}}>*/}
+            {/*    <h3>Overdue Tasks:</h3>*/}
+            {/*    <ul>*/}
+            {/*        {overdueTasks.map((task: custom, index: number) => (*/}
+            {/*            <>*/}
+            {/*                <li key={index}> Title : {task.title}</li>*/}
+            {/*                <li key={index}> Due Date: {task.dueDate.toDateString()} </li>*/}
+            {/*                <li key={index}> Priority: {task.priority} </li>*/}
+            {/*                <li key={index}> Description: {task.description} </li>*/}
+            {/*                <button onClick={(): any => handleComplete(index)}> Completed</button>*/}
+            {/*                <button onClick={(): any => handleDeleteTask(index)}>Delete</button>*/}
+            {/*            </>*/}
+            {/*        ))}*/}
+            {/*    </ul>*/}
+            {/*</div>*/}
 
             <div style={{display: "grid"}}>
                 <h3>Completed Tasks:</h3>
                 <ul>
-                    {completedTasks.map((task: custom, index: number) => (
-                        <li key={index}>Title : {task.title} Priority: {task.priority} Due Date: {task.dueDate?.toString()} Description: {task.description}</li>
+                    {tasks.filter((task: custom): boolean => task.status === 'completed')?.map((task: custom, index: number) => (
+                        <>
+                            <li key={index}> Title : {task.title}</li>
+                            <li key={index}> Due Date: {task.dueDate.toDateString()} </li>
+                            <li key={index}> Priority: {task.priority} </li>
+                            <li key={index}> Description: {task.description} </li>
+                            <button onClick={(): any => handleDelete(task)}>Delete</button>
+                        </>
                     ))}
                 </ul>
             </div>
