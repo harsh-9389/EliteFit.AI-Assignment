@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import './App.css'
 import { Dropdown } from 'primereact/dropdown';
 
@@ -13,9 +13,9 @@ type custom = {
 function App() {
     const [title, setTitle] = useState<string>('')
     const [priority, setPriority] = useState<string>('')
-    const [dueDate, setDueDate] = useState<Date>(new Date())
+    const [dueDate, setDueDate] = useState<Date>()
     const [description, setDescription] = useState<string>('')
-    const [status, setStatus] = useState<string>('upcoming')
+    const [status] = useState<string>('upcoming')
 
     const [tasks, setTasks] = useState<custom[]>([])
 
@@ -36,14 +36,19 @@ function App() {
     }
 
     const handleAddTask: any = (): void => {
-        const newTask:custom = {
+        if (!title || !priority || !dueDate || !description) {
+            alert("Please fill in all fields before adding a task.");
+            return;
+        }
+
+        const newTask: custom = {
             title,
             priority,
             dueDate,
             description,
             status
         }
-        setTasks([...tasks, newTask])
+        setTasks([...tasks, newTask]);
     }
 
     const handleDelete: any = (task: custom): void => {
@@ -60,6 +65,37 @@ function App() {
         });
         setTasks(updatedTasks);
     }
+
+    const moveTasksToDue = (): void => {
+        const now = new Date();
+        const updatedTasks = tasks.map((task: custom): custom => {
+            if (task.status === 'upcoming' && task.dueDate < now) {
+                return { ...task, status: 'due' };
+            }
+            return task;
+        });
+        setTasks(updatedTasks);
+    }
+
+    useEffect(() => {
+        const interval = setInterval(moveTasksToDue, 60000); // Check every minute
+        return () => clearInterval(interval);
+    }, [tasks]);
+
+    // Report Tasks to localStorage
+    useEffect(() => {
+        const savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+            setTasks(JSON.parse(savedTasks).map((task: custom) => ({
+                ...task,
+                dueDate: new Date(task.dueDate)
+            })));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }, [tasks]);
 
   return (
     <>
@@ -90,7 +126,6 @@ function App() {
             placeholder="Please enter your description here"
             onChange={handleChangeDescription}
         />
-
         <button onClick={handleAddTask}>Add Task</button>
 
         <div style={{display: "flex"}}>
@@ -111,21 +146,21 @@ function App() {
                 </ul>
             </div>
 
-            {/*<div style={{display: "grid"}}>*/}
-            {/*    <h3>Overdue Tasks:</h3>*/}
-            {/*    <ul>*/}
-            {/*        {overdueTasks.map((task: custom, index: number) => (*/}
-            {/*            <>*/}
-            {/*                <li key={index}> Title : {task.title}</li>*/}
-            {/*                <li key={index}> Due Date: {task.dueDate.toDateString()} </li>*/}
-            {/*                <li key={index}> Priority: {task.priority} </li>*/}
-            {/*                <li key={index}> Description: {task.description} </li>*/}
-            {/*                <button onClick={(): any => handleComplete(index)}> Completed</button>*/}
-            {/*                <button onClick={(): any => handleDeleteTask(index)}>Delete</button>*/}
-            {/*            </>*/}
-            {/*        ))}*/}
-            {/*    </ul>*/}
-            {/*</div>*/}
+            <div style={{display: "grid"}}>
+                <h3>Overdue Tasks:</h3>
+                <ul>
+                    {tasks.filter((task: custom): boolean => task.status === 'due')?.map((task: custom, index: number) => (
+                        <>
+                            <li key={index}> Title : {task.title}</li>
+                            <li key={index}> Due Date: {task.dueDate.toDateString()} </li>
+                            <li key={index}> Priority: {task.priority} </li>
+                            <li key={index}> Description: {task.description} </li>
+                            <button onClick={(): any => handleComplete(task)}> Completed</button>
+                            <button onClick={(): any => handleDelete(task)}>Delete</button>
+                        </>
+                    ))}
+                </ul>
+            </div>
 
             <div style={{display: "grid"}}>
                 <h3>Completed Tasks:</h3>
