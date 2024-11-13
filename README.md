@@ -81,3 +81,4 @@ For any questions or feedback, please contact [harsh-9389](https://github.com/ha
 ## Deployment Link [here](https://task-manager-elitfit.netlify.app/)
 
 ## video Link [here](https://drive.google.com/file/d/1U21h4albp6BQ6utyuzMKXkbXshFjSXJ3/view?usp=sharing)
+## Anser to technical questions [here](https://github.com/harsh-9389/EliteFit.AI-Assignment/blob/main/Answers%20to%20technical%20questions.md)
