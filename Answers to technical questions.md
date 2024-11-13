@@ -5,6 +5,8 @@ Around four to five hours
 
 #### 2. What was the most useful feature that was added to the latest version of your chosen language? Please include a snippet of code that shows how you've used it.
 ```bash
+The language used in this project is TypeScript. Some of the most useful features of the latest version of TypeScript (as of TypeScript 4.9) include:
+
 1. Satisfies Operator: Ensures that an expression matches a specific type without changing the type of the expression.
 2. Template Literal Types: Enhanced support for template literal types, allowing more complex string manipulations and validations.
 3. Exact Optional Property Types: More precise handling of optional properties in types.
