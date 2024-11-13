@@ -10,15 +10,16 @@ type custom = {
     status: string
 }
 
-function App(): Element {
+function App(): React.JSX.Element {
+    // first ask name of the user if it is not stored in the local storage
     const [name, setName] = useState<string>('');
 
-    useEffect(() => {
-        const savedName = localStorage.getItem('name');
+    useEffect((): void => {
+        const savedName: string|null = localStorage.getItem('name');
         if (savedName) {
             setName(savedName);
         } else {
-            const userName = prompt("Please enter your name");
+            const userName: string|null = prompt("Please enter your name");
             if (userName) {
                 setName(userName);
                 localStorage.setItem('name', name);
@@ -26,6 +27,9 @@ function App(): Element {
         }
     }, []);
 
+//------------------------------ Task Management -------------------------------------//
+
+    //------------------------- Important Parameters-------------------------//
     const [title, setTitle] = useState<string>('')
     const [priority, setPriority] = useState<string>('')
     const [dueDate, setDueDate] = useState<Date>()
@@ -33,22 +37,28 @@ function App(): Element {
     const [status] = useState<string>('upcoming')
 
     const [tasks, setTasks] = useState<custom[]>([])
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
-    const handleChangeInput: any = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    //------------------------- Different handlers for different functionalities -------------------------//
+    const handleChangeTitle: any = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setTitle(event.target.value)
-    }
-
-    const handleChangeDate: any = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setDueDate(new Date(event.target.value))
     }
 
     const handleChangePriority: any = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setPriority(event.target.value)
     }
 
+    const handleChangeDate: any = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setDueDate(new Date(event.target.value))
+    }
+
     const handleChangeDescription: any = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setDescription(event.target.value)
     }
+
+    const handleSearchChange: any = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setSearchQuery(event.target.value);
+    };
 
     const getPriorityValue = (priority: string): number => {
         switch (priority) {
@@ -77,9 +87,17 @@ function App(): Element {
             status
         };
 
-        const updatedTasks = [...tasks, newTask].sort((a, b) => getPriorityValue(a.priority) - getPriorityValue(b.priority));
+        const updatedTasks: custom[] = [...tasks, newTask].sort((a: custom, b: custom): number => getPriorityValue(a.priority) - getPriorityValue(b.priority));
         setTasks(updatedTasks);
     };
+
+    // --------------------Filter tasks based on search query------------------------//
+    const filteredTasks: custom[] = tasks.filter((task: custom): boolean =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.description.toLowerCase().includes(searchQuery.toLowerCase())||
+        task.dueDate.toString().includes(searchQuery.toLowerCase())||
+        task.priority.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const handleDelete: any = (task: custom): void => {
         const updatedTasks: custom[] = tasks.filter((element: custom): boolean => element !== task);
@@ -97,7 +115,6 @@ function App(): Element {
     }
 
     const handleEdit = (task: custom): void => {
-        // setEditingTask(task);
         setTitle(task.title);
         setPriority(task.priority);
         setDueDate(task.dueDate);
@@ -105,22 +122,10 @@ function App(): Element {
         handleDelete(task);
     };
 
-    const [searchQuery, setSearchQuery] = useState<string>('');
-
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setSearchQuery(event.target.value);
-    };
-
-    const filteredTasks = tasks.filter((task: custom) =>
-        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        task.description.toLowerCase().includes(searchQuery.toLowerCase())||
-        task.dueDate.toString().includes(searchQuery.toLowerCase())||
-        task.priority.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
+    //------------------------- Move Tasks to Due Tasks if due date is passed ----------------//
     const moveTasksToDue = (): void => {
         const now = new Date();
-        const updatedTasks = tasks.map((task: custom): custom => {
+        const updatedTasks: custom[] = tasks.map((task: custom): custom => {
             if (task.status === 'upcoming' && task.dueDate < now) {
                 return {...task, status: 'due'};
             }
@@ -130,13 +135,13 @@ function App(): Element {
     }
 
     useEffect(() => {
-        const interval = setInterval(moveTasksToDue, 10); // Check every minute
-        return () => clearInterval(interval);
+        const interval: number = setInterval(moveTasksToDue, 10); // Check every minute
+        return (): void => clearInterval(interval);
     }, [tasks]);
 
-    // Report Tasks to localStorage
-    useEffect(() => {
-        const savedTasks = localStorage.getItem('tasks');
+    //------------------------Report Tasks to localStorage---------------//
+    useEffect((): void => {
+        const savedTasks: string|null = localStorage.getItem('tasks');
         if (savedTasks) {
             setTasks(JSON.parse(savedTasks).map((task: custom) => ({
                 ...task,
@@ -145,13 +150,13 @@ function App(): Element {
         }
     }, []);
 
-    useEffect(() => {
+    useEffect((): void => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }, [tasks]);
 
     return (
         <div className="container mx-auto">
-            <h2 className="text-2xl font-bold text-gray-700 font-serif text-red-500">Welcome, Dear {name || 'User'}! Glad to see you on our platform</h2>
+            <h2 className="text-2xl font-bold font-serif text-red-500">Welcome, Dear {name || 'User'}! Glad to see you on our platform</h2>
 
             <div className="flex m-4">
                 <input
@@ -159,7 +164,7 @@ function App(): Element {
                     name='Title'
                     value={title}
                     placeholder="Please enter your task"
-                    onChange={handleChangeInput}
+                    onChange={handleChangeTitle}
                     className="border p-2 rounded w-1/3 m-2 font-mono text-gray-400 outline-0"
                 />
                 <Dropdown
@@ -213,13 +218,13 @@ function App(): Element {
                                 <p><strong>Due Date:</strong> {task.dueDate.toDateString()}</p>
                                 <p><strong>Priority:</strong> {task.priority}</p>
                                 <p><strong>Description:</strong> {task.description}</p>
-                                <button onClick={() => handleComplete(task)}
+                                <button onClick={(): void => handleComplete(task)}
                                         className="bg-green-500 text-white p-1 rounded mr-2 font-serif">Complete
                                 </button>
-                                <button onClick={() => handleEdit(task)}
+                                <button onClick={(): void => handleEdit(task)}
                                         className="bg-yellow-500 text-white p-1 rounded font-serif mr-2">Edit
                                 </button>
-                                <button onClick={() => handleDelete(task)}
+                                <button onClick={(): void => handleDelete(task)}
                                         className="bg-red-500 text-white p-1 rounded font-serif">Delete
                                 </button>
                             </div>
@@ -236,13 +241,13 @@ function App(): Element {
                                 <p><strong>Due Date:</strong> {task.dueDate.toDateString()}</p>
                                 <p><strong>Priority:</strong> {task.priority}</p>
                                 <p><strong>Description:</strong> {task.description}</p>
-                                <button onClick={() => handleComplete(task)}
+                                <button onClick={(): void => handleComplete(task)}
                                         className="bg-green-500 text-white p-1 rounded mr-2 font-serif">Complete
                                 </button>
-                                <button onClick={() => handleEdit(task)}
+                                <button onClick={(): void => handleEdit(task)}
                                         className="bg-yellow-500 text-white p-1 rounded font-serif mr-2">Edit
                                 </button>
-                                <button onClick={() => handleDelete(task)}
+                                <button onClick={(): void => handleDelete(task)}
                                         className="bg-red-500 text-white p-1 rounded font-serif">Delete
                                 </button>
                             </div>
@@ -259,7 +264,7 @@ function App(): Element {
                                 <p><strong>Due Date:</strong> {task.dueDate.toDateString()}</p>
                                 <p><strong>Priority:</strong> {task.priority}</p>
                                 <p><strong>Description:</strong> {task.description}</p>
-                                <button onClick={() => handleDelete(task)}
+                                <button onClick={(): void => handleDelete(task)}
                                         className="bg-red-500 text-white p-1 rounded font-serif">Delete
                                 </button>
                             </div>
