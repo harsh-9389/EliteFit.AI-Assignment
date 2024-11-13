@@ -77,3 +77,7 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 ## Contact
 
 For any questions or feedback, please contact [harsh-9389](https://github.com/harsh-9389).
+
+## Deployment Link [here](https://task-manager-elitfit.netlify.app/)
+
+## video Link [here](https://drive.google.com/file/d/1U21h4albp6BQ6utyuzMKXkbXshFjSXJ3/view?usp=sharing)
