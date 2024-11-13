@@ -6,7 +6,24 @@
   <component name="ChangeListManager">
     <list default="true" id="45964fd7-b152-444f-b6c0-b963612ad369" name="Changes" comment="project initialized and structure is prepared">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/eslint.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/eslint.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/postcss.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/postcss.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/public/vite.svg" beforeDir="false" afterPath="$PROJECT_DIR$/public/vite.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/declarations.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/declarations.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.app.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.node.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.node.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,6 +91,11 @@
       </map>
     </option>
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\projects\task_manager" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -90,7 +112,8 @@
       <option name="presentableId" value="Default" />
       <updated>1731418087392</updated>
       <workItem from="1731418089532" duration="347000" />
-      <workItem from="1731418459223" duration="37028000" />
+      <workItem from="1731418459223" duration="39015000" />
+      <workItem from="1731494725412" duration="304000" />
     </task>
     <task id="LOCAL-00001" summary="project initialized and structure is prepared">
       <option name="closed" value="true" />

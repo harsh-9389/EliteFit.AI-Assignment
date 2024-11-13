@@ -25,7 +25,7 @@ function App(): React.JSX.Element {
                 localStorage.setItem('name', name);
             }
         }
-    }, []);
+    }, [name]);
 
 //------------------------------ Task Management -------------------------------------//
 
