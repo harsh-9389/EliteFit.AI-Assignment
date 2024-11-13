@@ -10,7 +10,22 @@ type custom = {
     status: string
 }
 
-function App() {
+function App(): Element {
+    const [name, setName] = useState<string>('');
+
+    useEffect(() => {
+        const savedName = localStorage.getItem('name');
+        if (savedName) {
+            setName(savedName);
+        } else {
+            const userName = prompt("Please enter your name");
+            if (userName) {
+                setName(userName);
+                localStorage.setItem('name', name);
+            }
+        }
+    }, []);
+
     const [title, setTitle] = useState<string>('')
     const [priority, setPriority] = useState<string>('')
     const [dueDate, setDueDate] = useState<Date>()
@@ -81,6 +96,28 @@ function App() {
         setTasks(updatedTasks);
     }
 
+    const handleEdit = (task: custom): void => {
+        // setEditingTask(task);
+        setTitle(task.title);
+        setPriority(task.priority);
+        setDueDate(task.dueDate);
+        setDescription(task.description);
+        handleDelete(task);
+    };
+
+    const [searchQuery, setSearchQuery] = useState<string>('');
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setSearchQuery(event.target.value);
+    };
+
+    const filteredTasks = tasks.filter((task: custom) =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.description.toLowerCase().includes(searchQuery.toLowerCase())||
+        task.dueDate.toString().includes(searchQuery.toLowerCase())||
+        task.priority.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     const moveTasksToDue = (): void => {
         const now = new Date();
         const updatedTasks = tasks.map((task: custom): custom => {
@@ -93,7 +130,7 @@ function App() {
     }
 
     useEffect(() => {
-        const interval = setInterval(moveTasksToDue, 30000); // Check every minute
+        const interval = setInterval(moveTasksToDue, 10); // Check every minute
         return () => clearInterval(interval);
     }, [tasks]);
 
@@ -114,16 +151,16 @@ function App() {
 
     return (
         <div className="container mx-auto">
-            <h2 className="text-2xl font-bold text-gray-700 font-serif">Hello, Dear User! Glad to see you on our platform</h2>
+            <h2 className="text-2xl font-bold text-gray-700 font-serif text-red-500">Welcome, Dear {name || 'User'}! Glad to see you on our platform</h2>
 
             <div className="flex m-4">
                 <input
                     type="text"
                     name='Title'
                     value={title}
-                    placeholder="Please enter your task here"
+                    placeholder="Please enter your task"
                     onChange={handleChangeInput}
-                    className="border p-2 rounded w-full m-2 font-mono"
+                    className="border p-2 rounded w-1/3 m-2 font-mono text-gray-400 outline-0"
                 />
                 <Dropdown
                     type="text"
@@ -131,13 +168,14 @@ function App() {
                     onChange={handleChangePriority}
                     options={['High', 'Medium', 'Low']}
                     placeholder="Set Priority"
-                    className="border p-2 rounded w-full m-2 text-gray-400 font-mono"
+                    className="border p-2 rounded w-1/3 m-2 text-gray-400 font-mono"
                 />
                 <input
                     type="date"
                     name='Due Date'
+                    value={dueDate ? dueDate.toISOString().split('T')[0] : ''}
                     onChange={handleChangeDate}
-                    className="border p-2 rounded w-full m-2 text-gray-400 font-mono"
+                    className="border p-2 rounded w-1/3 m-2 text-gray-400 font-mono outline-0"
                 />
             </div>
 
@@ -146,34 +184,45 @@ function App() {
                 <input
                     type="text"
                     name="description"
-                    placeholder="Please enter your description here"
+                    value={description}
+                    placeholder="Please enter task description"
                     onChange={handleChangeDescription}
-                    className="border p-2 rounded w-80 m-2 font-mono"
+                    className="border p-2 rounded w-1/3 m-2 font-mono outline-0 text-gray-400"
                 />
                 <button
                     onClick={handleAddTask}
-                    className="bg-blue-500 text-white p-2 rounded w-40 m-2 font-serif"
+                    className="bg-blue-500 text-white p-2 w-1/3 rounded m-2 font-serif"
                 >Add Task
                 </button>
+                <input
+                    type="text"
+                    value={searchQuery}
+                    placeholder="Search tasks by title, description, due date, or priority"
+                    onChange={handleSearchChange}
+                    className="border p-2 rounded w-1/3 m-2 h-10 font-mono text-gray-400 outline-0"
+                />
             </div>
 
             <div className="flex space-x-4">
                 <div className="w-1/3">
                     <h3 className="text-xl font-semibold mb-2 text-blue-800 font-serif">Upcoming Tasks:</h3>
                     <ul className="list-disc pl-5">
-                        {tasks.filter((task: custom): boolean => task.status === 'upcoming')?.map((task: custom, index: number) => (
-                                <div className="border p-2 rounded bg-blue-200 font-mono mb-2">
-                                    <p><strong>Title:</strong> {task.title}</p>
-                                    <p><strong>Due Date:</strong> {task.dueDate.toDateString()}</p>
-                                    <p><strong>Priority:</strong> {task.priority}</p>
-                                    <p><strong>Description:</strong> {task.description}</p>
-                                    <button onClick={() => handleComplete(task)}
-                                            className="bg-green-500 text-white p-1 rounded mr-2 font-serif">Completed
-                                    </button>
-                                    <button onClick={() => handleDelete(task)}
-                                            className="bg-red-500 text-white p-1 rounded font-serif">Delete
-                                    </button>
-                                </div>
+                        {filteredTasks.filter((task: custom): boolean => task.status === 'upcoming')?.map((task: custom, _: number) => (
+                            <div className="border p-2 rounded bg-blue-200 font-mono mb-2">
+                                <p><strong>Title:</strong> {task.title}</p>
+                                <p><strong>Due Date:</strong> {task.dueDate.toDateString()}</p>
+                                <p><strong>Priority:</strong> {task.priority}</p>
+                                <p><strong>Description:</strong> {task.description}</p>
+                                <button onClick={() => handleComplete(task)}
+                                        className="bg-green-500 text-white p-1 rounded mr-2 font-serif">Complete
+                                </button>
+                                <button onClick={() => handleEdit(task)}
+                                        className="bg-yellow-500 text-white p-1 rounded font-serif mr-2">Edit
+                                </button>
+                                <button onClick={() => handleDelete(task)}
+                                        className="bg-red-500 text-white p-1 rounded font-serif">Delete
+                                </button>
+                            </div>
                         ))}
                     </ul>
                 </div>
@@ -181,19 +230,22 @@ function App() {
                 <div className="w-1/3">
                     <h3 className="text-xl font-semibold mb-2 font-serif text-yellow-500">Overdue Tasks:</h3>
                     <ul className="list-disc pl-5">
-                        {tasks.filter((task: custom): boolean => task.status === 'due')?.map((task: custom, index: number) => (
-                                <div className="border p-2 rounded bg-yellow-200 font-mono mb-2">
-                                    <p><strong>Title:</strong> {task.title}</p>
-                                    <p><strong>Due Date:</strong> {task.dueDate.toDateString()}</p>
-                                    <p><strong>Priority:</strong> {task.priority}</p>
-                                    <p><strong>Description:</strong> {task.description}</p>
-                                    <button onClick={() => handleComplete(task)}
-                                            className="bg-green-500 text-white p-1 rounded mr-2 font-serif">Completed
-                                    </button>
-                                    <button onClick={() => handleDelete(task)}
-                                            className="bg-red-500 text-white p-1 rounded font-serif">Delete
-                                    </button>
-                                </div>
+                        {filteredTasks.filter((task: custom): boolean => task.status === 'due')?.map((task: custom, _: number) => (
+                            <div className="border p-2 rounded bg-yellow-200 font-mono mb-2">
+                                <p><strong>Title:</strong> {task.title}</p>
+                                <p><strong>Due Date:</strong> {task.dueDate.toDateString()}</p>
+                                <p><strong>Priority:</strong> {task.priority}</p>
+                                <p><strong>Description:</strong> {task.description}</p>
+                                <button onClick={() => handleComplete(task)}
+                                        className="bg-green-500 text-white p-1 rounded mr-2 font-serif">Complete
+                                </button>
+                                <button onClick={() => handleEdit(task)}
+                                        className="bg-yellow-500 text-white p-1 rounded font-serif mr-2">Edit
+                                </button>
+                                <button onClick={() => handleDelete(task)}
+                                        className="bg-red-500 text-white p-1 rounded font-serif">Delete
+                                </button>
+                            </div>
                         ))}
                     </ul>
                 </div>
@@ -201,16 +253,16 @@ function App() {
                 <div className="w-1/3">
                     <h3 className="text-xl font-semibold mb-2 text-green-700 font-serif">Completed Tasks:</h3>
                     <ul className="list-disc pl-5">
-                        {tasks.filter((task: custom): boolean => task.status === 'completed')?.map((task: custom, index: number) => (
-                                <div className="border p-2 rounded bg-green-200 font-mono mb-2">
-                                    <p><strong>Title:</strong> {task.title}</p>
-                                    <p><strong>Due Date:</strong> {task.dueDate.toDateString()}</p>
-                                    <p><strong>Priority:</strong> {task.priority}</p>
-                                    <p><strong>Description:</strong> {task.description}</p>
-                                    <button onClick={() => handleDelete(task)}
-                                            className="bg-red-500 text-white p-1 rounded font-serif">Delete
-                                    </button>
-                                </div>
+                        {filteredTasks.filter((task: custom): boolean => task.status === 'completed')?.map((task: custom, _: number) => (
+                            <div className="border p-2 rounded bg-green-200 font-mono mb-2">
+                                <p><strong>Title:</strong> {task.title}</p>
+                                <p><strong>Due Date:</strong> {task.dueDate.toDateString()}</p>
+                                <p><strong>Priority:</strong> {task.priority}</p>
+                                <p><strong>Description:</strong> {task.description}</p>
+                                <button onClick={() => handleDelete(task)}
+                                        className="bg-red-500 text-white p-1 rounded font-serif">Delete
+                                </button>
+                            </div>
                         ))}
                     </ul>
                 </div>
